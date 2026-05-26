@@ -18,6 +18,7 @@ pub struct StreetMesh {
     pub end: (f32, f32, f32),
     pub width: f32,
     pub color: [f32; 4],
+    pub name: String,
 }
 
 /// Mesh data for a district ground tint
@@ -77,6 +78,7 @@ pub fn build_city(plan: &CityPlan) -> CityMeshes {
             end: (s.end.0, 0.0, s.end.1),
             width: s.width,
             color: s.color,
+            name: s.name.clone(),
         })
         .collect();
 
