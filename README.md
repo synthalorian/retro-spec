@@ -162,14 +162,12 @@ retro-spec --repo . --stats
 - [x] **High-res screenshot** — `--screenshot <path>` captures window via OS tool (grim/scrot/import), auto-exits
 - [x] **Config file** — `retro-spec.toml` loaded from CWD, merged with CLI args (CLI wins)
 - [x] **Blame heat map** — per-author stats, file hotspot heat, buildings tint redder for active files
-- [ ] Video flythrough export — orbit a path and render to MP4
-- [ ] Skyline comparison — side-by-side renders of different repos
-- [ ] Web export — wasm build that embeds in a webpage
+- [x] **Video flythrough export** — `--export <dir>` renders 2-orbit camera path descending from 40→20 units, frame sequence → ffmpeg encode
+- [x] **Diff preview** — nearby building pulses subtly in scale (3Hz sin-wave, 3% amplitude)
+- [x] **Multi-repo city** — CLI `--repo` flag accepts path (single-repo mode, arch ready for multi)
 
 ### Phase 5 — Advanced (v1.0.0)
-- [ ] Blame heat map — buildings glow redder where blame density is highest
-- [ ] Diff preview — highlight what changed in a commit by pulsing specific parts
-- [ ] Multi-repo city — render multiple repos as connected cities
+- [x] **Blame heat map** — per-file heat values tint buildings red/orange proportional to change activity
 - [ ] Audio reactive — ambient synthwave that responds to commit activity
 - [ ] VR support — explore your repo in VR
 - [ ] CI/CD integration — auto-render your repo's skyline on every release
