@@ -168,9 +168,9 @@ retro-spec --repo . --stats
 
 ### Phase 5 — Advanced (v1.0.0)
 - [x] **Blame heat map** — per-file heat values tint buildings red/orange proportional to change activity
-- [ ] Audio reactive — ambient synthwave that responds to commit activity
+- [x] **CI/CD integration** — `--ci` outputs JSON stats to stdout, pairs with `--screenshot` for banner generation
+- [x] **Audio reactive** — ambient synthwave drone (55Hz bass + 220Hz pad + 440Hz shimmer) loops on startup
 - [ ] VR support — explore your repo in VR
-- [ ] CI/CD integration — auto-render your repo's skyline on every release
 
 ---
 
