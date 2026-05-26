@@ -27,6 +27,12 @@ struct CommitData {
     commits: Vec<git::commit::CommitInfo>,
 }
 
+/// Track which building the player is looking at (for diff pulse animation)
+#[derive(Resource, Default)]
+struct FocusedBuilding {
+    pub commit_id: Option<String>,
+}
+
 fn main() -> anyhow::Result<()> {
     // Initialize logging
     tracing_subscriber::fmt()
@@ -138,6 +144,7 @@ fn main() -> anyhow::Result<()> {
     app.insert_resource(timeline_state);
     app.insert_resource(legend_state);
     app.insert_resource(blame_heatmap);
+    app.insert_resource(FocusedBuilding::default());
 
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
@@ -155,6 +162,19 @@ fn main() -> anyhow::Result<()> {
         app.add_systems(Update, export::screenshot::capture_screenshot);
     }
 
+    // ── Video export (only if --export flag is set) ──
+    if args.export.is_some() {
+        let export_dir = args.export.clone().unwrap().to_string_lossy().to_string();
+        // Create directory
+        let _ = std::fs::create_dir_all(&export_dir);
+        app.insert_resource(export::video::ExportState::new(
+            export_dir,
+            args.duration,
+            30,
+        ));
+        app.add_systems(Update, export::video::export_flythrough);
+    }
+
     app.add_systems(Startup, setup_scene);
     app.add_systems(Startup, ui::setup_hud);
     app.add_systems(Startup, ui::setup_timeline);
@@ -167,6 +187,7 @@ fn main() -> anyhow::Result<()> {
     app.add_systems(Update, render::rotate_tag_beacons);
     app.add_systems(Update, render::animate_particles);
     app.add_systems(Update, render::apply_lod);
+    app.add_systems(Update, render::animate_focused_building);
 
     app.run();
 
