@@ -37,6 +37,10 @@ pub struct Cli {
     #[arg(long = "stats")]
     pub stats: bool,
 
+    /// CI/CD mode: output JSON stats and exit (useful for badges/dashboards)
+    #[arg(long = "ci")]
+    pub ci: bool,
+
     /// Start in windowed mode (don't fullscreen)
     #[arg(long = "windowed")]
     pub windowed: bool,
