@@ -1,0 +1,44 @@
+[package]
+name = "retro-spec"
+version = "0.1.0"
+edition = "2021"
+description = "Walk your git history as a 3D neon cityscape"
+authors = ["synth (synthalorian)"]
+license = "MIT"
+repository = "https://github.com/synthalorian/retro-spec"
+
+[dependencies]
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Git parsing
+git2 = "0.19"
+
+# 3D rendering
+bevy = "0.15"
+
+# Serialization (config/themes)
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Time parsing
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+anyhow = "1"
+thiserror = "2"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Utility
+rand = "0.8"
+image = "0.25"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = "symbols"

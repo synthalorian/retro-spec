@@ -1,0 +1,24 @@
+# RetroSpec Configuration
+# Place this file in the directory where you run retro-spec.
+# CLI flags override these values.
+
+# Default repository path
+# repo = "/home/synth/projects/open_habit"
+
+# Visual theme (synthwave84, matrix, chrome, omarchy)
+# theme = "omarchy"
+
+# Screenshot output path
+# screenshot = "skyline.png"
+
+# Video export path
+# export = "flythrough.mp4"
+
+# Export duration in seconds
+# duration = 30
+
+# Screenshot/video resolution
+# resolution = "3840x2160"
+
+# Start in windowed mode (don't fullscreen)
+# windowed = false
