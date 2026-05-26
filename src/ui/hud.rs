@@ -67,6 +67,7 @@ pub fn hud_system(
     mut hud_text: Query<&mut Text, With<HudDescriptionText>>,
     commit_data: Res<crate::CommitData>,
     _hud_state: Res<HudState>,
+    mut focused: ResMut<crate::FocusedBuilding>,
 ) {
     let Ok(mut text) = hud_text.get_single_mut() else {
         return;
@@ -119,24 +120,29 @@ pub fn hud_system(
             };
 
             text.0 = format!(
-                "═══ {} ═══{}\n\
-                 {} by {}\n\
-                 │ +{} / -{}  {} files\n\
-                 │ {}{}",
-                &commit.id[..7],
-                if commit.is_merge { " 🔀" } else { "" },
-                date,
-                commit.author,
-                commit.lines_added,
-                commit.lines_deleted,
-                commit.files_changed,
-                msg,
-                tag_indicator,
-            );
-        } else {
-            text.0 = String::new();
-        }
-    } else {
-        text.0 = String::new();
-    }
+                            "═══ {} ═══{}\\n\
+                             {} by {}\n\
+                             │ +{} / -{}  {} files\n\
+                             │ {}{}",
+                            &commit.id[..7],
+                            if commit.is_merge { " 🔀" } else { "" },
+                            date,
+                            commit.author,
+                            commit.lines_added,
+                            commit.lines_deleted,
+                            commit.files_changed,
+                            msg,
+                            tag_indicator,
+                        );
+
+                        // Set focused building for diff preview pulse
+                        focused.commit_id = Some(commit.id.clone());
+                    } else {
+                        text.0 = String::new();
+                        focused.commit_id = None;
+                    }
+                } else {
+                    text.0 = String::new();
+                    focused.commit_id = None;
+                }
 }
