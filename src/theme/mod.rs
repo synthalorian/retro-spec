@@ -1,7 +1,6 @@
 pub mod synthwave84;
 pub mod matrix;
 pub mod chrome;
-pub mod omarchy;
 
 use serde::{Deserialize, Serialize};
 
@@ -27,12 +26,11 @@ pub fn get_theme(name: &str) -> Theme {
         "synthwave84" => synthwave84::theme(),
         "matrix" => matrix::theme(),
         "chrome" => chrome::theme(),
-        "omarchy" => omarchy::theme(),
         _ => synthwave84::theme(),
     }
 }
 
 /// List all available theme names
 pub fn list_themes() -> Vec<&'static str> {
-    vec!["synthwave84", "matrix", "chrome", "omarchy"]
+    vec!["synthwave84", "matrix", "chrome"]
 }
