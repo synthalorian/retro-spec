@@ -27,6 +27,22 @@ pub fn spawn_streets(
             Transform::from_xyz(mid_x, 0.03, mid_z).with_rotation(Quat::from_rotation_y(angle)),
         ));
     }
+
+    // Branch boulevard labels — floating text above each street
+    for s in streets {
+        let mid_x = (s.start.0 + s.end.0) / 2.0;
+        let mid_z = (s.start.2 + s.end.2) / 2.0;
+        commands.spawn((
+            Text2d::new(format!("🌆 {}", s.name)),
+            TextFont {
+                font_size: 14.0,
+                ..Default::default()
+            },
+            TextColor(Color::srgba(s.color[0], s.color[1], s.color[2], 1.0)),
+            Transform::from_xyz(mid_x, 2.5, mid_z)
+                .with_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2 * 0.6)),
+        ));
+    }
 }
 
 /// Spawn glowing merge intersection plazas — glowing rings at branch crossroads
