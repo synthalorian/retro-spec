@@ -15,7 +15,7 @@ clap = { version = "4", features = ["derive"] }
 git2 = "0.19"
 
 # 3D rendering
-bevy = "0.15"
+bevy = { version = "0.15", features = ["wav"] }
 
 # Serialization (config/themes)
 serde = { version = "1", features = ["derive"] }

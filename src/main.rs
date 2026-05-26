@@ -6,6 +6,7 @@ mod render;
 mod ui;
 mod export;
 mod theme;
+mod audio;
 
 use clap::Parser;
 use bevy::prelude::*;
@@ -210,6 +211,7 @@ fn main() -> anyhow::Result<()> {
     app.add_systems(Startup, ui::setup_hud);
     app.add_systems(Startup, ui::setup_timeline);
     app.add_systems(Startup, ui::setup_legend);
+    app.add_systems(Startup, audio::setup_audio);
     app.add_systems(Update, render::fly_camera_controls);
     app.add_systems(Update, ui::hud_system);
     app.add_systems(Update, ui::timeline_interaction);
