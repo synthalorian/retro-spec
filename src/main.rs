@@ -80,6 +80,37 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
+    // ── CI/CD mode: output JSON and optionally screenshot ──
+    if args.ci {
+        let mut author_set = std::collections::BTreeSet::new();
+        let mut total_added = 0u64;
+        let mut total_deleted = 0u64;
+        let mut merges = 0;
+        for c in &dag.commits {
+            author_set.insert(c.author.as_str());
+            total_added += c.lines_added as u64;
+            total_deleted += c.lines_deleted as u64;
+            if c.is_merge { merges += 1; }
+        }
+        let json = serde_json::json!({
+            "repo": repo_path,
+            "commits": dag.commits.len(),
+            "authors": author_set.len(),
+            "branches": dag.branches.len(),
+            "tags": dag.tags.len(),
+            "merges": merges,
+            "lines_added": total_added,
+            "lines_deleted": total_deleted,
+            "net_change": if total_added > total_deleted { total_added - total_deleted } else { total_deleted - total_added },
+            "theme": args.theme,
+        });
+        println!("{}", serde_json::to_string_pretty(&json)?);
+        // If CI mode without --screenshot, exit. With --screenshot, continue to render
+        if args.screenshot.is_none() {
+            return Ok(());
+        }
+    }
+
     // ── Step 3: Generate city plan ──
     let plan = city::planner::plan_city(&dag.commits)?;
     let meshes = city::builder::build_city(&plan);
