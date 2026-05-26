@@ -72,7 +72,21 @@ pub fn spawn_buildings(
             .unwrap_or(0.0);
 
         // Blend base color toward red/orange based on heat
-        let tinted = heat_tint_color(b.color, heat);
+        let mut tinted = heat_tint_color(b.color, heat);
+
+        // Commit type tint (feat=blue, fix=green, docs=yellow, etc.)
+        if let Some(cd) = commit_data {
+            if let Some(c) = cd.commits.iter().find(|c| c.id == b.commit_id) {
+                let type_color = commit_type_color(&c.commit_type);
+                // 85% existing tinted, 15% type color
+                tinted = [
+                    (tinted[0] * 0.85 + type_color[0] * 0.15).clamp(0.0, 1.0),
+                    (tinted[1] * 0.85 + type_color[1] * 0.15).clamp(0.0, 1.0),
+                    (tinted[2] * 0.85 + type_color[2] * 0.15).clamp(0.0, 1.0),
+                    tinted[3],
+                ];
+            }
+        }
 
         let tex_handle = texture_cache
             .entry(seed)
@@ -237,6 +251,21 @@ fn generate_window_texture(seed: u32, color: [f32; 4], lit_pct: u32) -> Image {
         TextureFormat::Rgba8UnormSrgb,
         RenderAssetUsages::MAIN_WORLD | RenderAssetUsages::RENDER_WORLD,
     )
+}
+
+/// Map commit type to a subtle tint color
+fn commit_type_color(commit_type: &str) -> [f32; 4] {
+    match commit_type {
+        "feat" => [0.3, 0.5, 1.0, 1.0],      // blue
+        "fix"  => [0.3, 1.0, 0.4, 1.0],      // green
+        "docs" => [1.0, 1.0, 0.3, 1.0],      // yellow
+        "chore" => [0.5, 0.5, 0.5, 1.0],     // grey
+        "refactor" => [0.6, 0.3, 1.0, 1.0],  // purple
+        "test"  => [1.0, 0.6, 0.2, 1.0],     // orange
+        "style" => [1.0, 0.4, 0.7, 1.0],     // pink
+        "perf"  => [1.0, 0.2, 0.2, 1.0],     // red
+        _       => [0.0, 0.0, 0.0, 1.0],     // no tint
+    }
 }
 
 /// DJB2 hash for string to u32 seed

@@ -18,6 +18,7 @@ pub struct CommitInfo {
     pub is_tagged: bool,
     pub tags: Vec<String>,
     pub files: Vec<String>,
+    pub commit_type: String, // feat, fix, docs, chore, refactor, test, style, other
 }
 
 /// Extract structured information from a git2::Commit
@@ -62,6 +63,8 @@ pub fn extract_commit_info(
         (0, 0, 0, vec![])
     };
 
+    let commit_type = classify_commit_type(&message);
+
     Ok(CommitInfo {
         id,
         author,
@@ -77,7 +80,45 @@ pub fn extract_commit_info(
         is_tagged: false,
         tags: Vec::new(),
         files,
+        commit_type,
     })
+}
+
+/// Classify a commit by its message prefix into a type category
+fn classify_commit_type(message: &str) -> String {
+    let first_line = message.lines().next().unwrap_or("").to_lowercase();
+    if first_line.starts_with("feat") || first_line.starts_with("feature") {
+        "feat".to_string()
+    } else if first_line.starts_with("fix") || first_line.starts_with("bug")
+        || first_line.starts_with("hotfix") || first_line.starts_with("patch")
+    {
+        "fix".to_string()
+    } else if first_line.starts_with("docs") || first_line.starts_with("doc")
+        || first_line.starts_with("readme")
+    {
+        "docs".to_string()
+    } else if first_line.starts_with("refactor") || first_line.starts_with("refact")
+        || first_line.starts_with("clean") || first_line.starts_with("rewrite")
+    {
+        "refactor".to_string()
+    } else if first_line.starts_with("chore") || first_line.starts_with("build")
+        || first_line.starts_with("ci") || first_line.starts_with("dep")
+        || first_line.starts_with("config")
+    {
+        "chore".to_string()
+    } else if first_line.starts_with("test") || first_line.starts_with("spec")
+    {
+        "test".to_string()
+    } else if first_line.starts_with("style") || first_line.starts_with("fmt")
+        || first_line.starts_with("lint") || first_line.starts_with("format")
+    {
+        "style".to_string()
+    } else if first_line.starts_with("perf") || first_line.starts_with("optimize")
+    {
+        "perf".to_string()
+    } else {
+        "other".to_string()
+    }
 }
 
 /// Get the datetime representation of a commit timestamp
