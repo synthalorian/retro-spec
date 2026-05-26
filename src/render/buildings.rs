@@ -269,3 +269,25 @@ pub fn apply_lod(
         }
     }
 }
+
+/// Pulse animation on the focused building (diff preview). 
+/// When the player is near a building, it subtly pulses in scale.
+pub fn animate_focused_building(
+    time: Res<Time<Virtual>>,
+    focused: Res<crate::FocusedBuilding>,
+    mut query: Query<(&Building, &mut Transform)>,
+) {
+    let elapsed = time.elapsed_secs();
+    let Some(ref focused_id) = focused.commit_id else {
+        return;
+    };
+
+    for (building, mut transform) in query.iter_mut() {
+        if &building.commit_id == focused_id {
+            let pulse = 1.0 + (elapsed * 3.0).sin() * 0.03;
+            // Only scale X and Z (not Y) — building grows wider but not taller
+            let current = transform.scale;
+            transform.scale = Vec3::new(pulse, 1.0, pulse);
+        }
+    }
+}
