@@ -171,12 +171,17 @@ fn main() -> anyhow::Result<()> {
     // ── Step 6: Launch Bevy ──
     let mut app = App::new();
 
+    app.insert_resource(blame_heatmap);
+    app.insert_resource(FocusedBuilding::default());
+    app.insert_resource(ui::hud::HudState::new(
+        app_state.commit_count,
+        app_state.branch_count,
+        app_state.author_count,
+    ));
     app.insert_resource(app_state);
     app.insert_resource(commit_data);
     app.insert_resource(timeline_state);
     app.insert_resource(legend_state);
-    app.insert_resource(blame_heatmap);
-    app.insert_resource(FocusedBuilding::default());
 
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
