@@ -226,7 +226,7 @@ MIT — because the grid belongs to everyone.
 
 ## Credits
 
-**Created by:** synth (synthalorian) with assistance from synthclaw 🎹🦞
+**Created by:** synth (synthalorian) with assistance from synthshark 🎹🦈
 
 **Inspiration:**
 - Gource — the pioneer of software version visualization
