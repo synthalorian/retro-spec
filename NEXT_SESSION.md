@@ -77,4 +77,4 @@ cargo run -- -r /home/synth/projects/retro-spec --stats
 
 ---
 
-*"A repository is a city built over time. Phase 2 complete — the city has districts, boulevards, crossroads, and a timeline. Now we polish."* 🏙️🎹🦞
+*"A repository is a city built over time. Phase 2 complete — the city has districts, boulevards, crossroads, and a timeline. Now we polish."* 🏙️🎹🦈
