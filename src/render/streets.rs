@@ -33,7 +33,7 @@ pub fn spawn_streets(
         let mid_x = (s.start.0 + s.end.0) / 2.0;
         let mid_z = (s.start.2 + s.end.2) / 2.0;
         commands.spawn((
-            Text2d::new(format!("🌆 {}", s.name)),
+            Text2d::new("🌆 Boulevard"),
             TextFont {
                 font_size: 14.0,
                 ..Default::default()
@@ -60,7 +60,7 @@ pub fn spawn_merge_plazas(
             Mesh3d(meshes.add(Torus::new(p.radius, 0.15))),
             MeshMaterial3d(materials.add(StandardMaterial {
                 base_color: color,
-                emissive: LinearRgba::from(color).into(),
+                emissive: LinearRgba::from(color),
                 unlit: true,
                 ..Default::default()
             })),

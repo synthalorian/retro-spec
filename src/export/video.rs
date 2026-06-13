@@ -7,7 +7,6 @@ pub struct ExportState {
     pub output_dir: String,
     pub total_frames: u32,
     pub current_frame: u32,
-    pub orbit_angle: f32,
     pub orbit_radius: f32,
     pub done: bool,
 }
@@ -19,7 +18,6 @@ impl ExportState {
             output_dir,
             total_frames,
             current_frame: 0,
-            orbit_angle: 0.0,
             orbit_radius: 80.0,
             done: false,
         }
@@ -35,7 +33,7 @@ pub struct ExportCameraMarker;
 /// and when finished encodes the frames into a video.
 pub fn export_flythrough(
     mut state: ResMut<ExportState>,
-    time: Res<Time<Virtual>>,
+    _time: Res<Time<Virtual>>,
     mut cam_query: Query<(&mut FlyCamera, &mut Transform), Without<ExportCameraMarker>>,
     mut exit: EventWriter<bevy::app::AppExit>,
 ) {
@@ -69,13 +67,26 @@ pub fn export_flythrough(
         state.current_frame
     );
 
-    let _ = std::process::Command::new("sh")
-        .arg("-c")
-        .arg(format!(
-            "grim \"{}\" 2>/dev/null || scrot \"{}\" 2>/dev/null || import -window root \"{}\" 2>/dev/null",
-            frame_path, frame_path, frame_path
-        ))
+    // Try grim (Wayland) first
+    let grim_result = std::process::Command::new("grim")
+        .arg(&frame_path)
         .output();
+    if grim_result.is_ok_and(|o| o.status.success()) {
+        // success
+    } else {
+        // Try scrot (X11)
+        let scrot_result = std::process::Command::new("scrot")
+            .arg(&frame_path)
+            .output();
+        if scrot_result.is_ok_and(|o| o.status.success()) {
+            // success
+        } else {
+            // Try ImageMagick import
+            let _ = std::process::Command::new("import")
+                .args(["-window", "root", &frame_path])
+                .output();
+        }
+    }
 
     state.current_frame += 1;
 
@@ -90,17 +101,14 @@ pub fn export_flythrough(
 
         // Try encoding with ffmpeg if available
         let output_video = format!("{}/flythrough.mp4", state.output_dir);
-        let result = std::process::Command::new("sh")
-            .arg("-c")
-            .arg(format!(
-                "ffmpeg -y -framerate 30 -i {0}/frame_%04d.png \
-                 -c:v libx264 -preset medium -crf 20 \
-                 -pix_fmt yuv420p {1} 2>/dev/null",
-                state.output_dir, output_video
-            ))
+        let ffmpeg_result = std::process::Command::new("ffmpeg")
+            .args(["-y", "-framerate", "30", "-i", &format!("{}/frame_%04d.png", state.output_dir)])
+            .args(["-c:v", "libx264", "-preset", "medium", "-crf", "20"])
+            .args(["-pix_fmt", "yuv420p"])
+            .arg(&output_video)
             .output();
 
-        match result {
+        match ffmpeg_result {
             Ok(out) if out.status.success() => {
                 tracing::info!("Video encoded: {}", output_video);
             }

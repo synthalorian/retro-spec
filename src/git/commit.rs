@@ -1,12 +1,10 @@
 use anyhow::Result;
-use chrono::{DateTime, Utc};
 
 /// Extracted metadata for a single commit
 #[derive(Clone, Debug)]
 pub struct CommitInfo {
     pub id: String,
     pub author: String,
-    pub author_email: String,
     pub timestamp: i64,
     pub message: String,
     pub lines_added: u32,
@@ -28,7 +26,6 @@ pub fn extract_commit_info(
 ) -> Result<CommitInfo> {
     let id = commit.id().to_string();
     let author = commit.author().name().unwrap_or("unknown").to_string();
-    let author_email = commit.author().email().unwrap_or("unknown").to_string();
     let timestamp = commit.time().seconds();
     let message = commit.message().unwrap_or("").to_string();
     let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
@@ -68,7 +65,6 @@ pub fn extract_commit_info(
     Ok(CommitInfo {
         id,
         author,
-        author_email,
         timestamp,
         message,
         lines_added,
@@ -121,7 +117,34 @@ fn classify_commit_type(message: &str) -> String {
     }
 }
 
-/// Get the datetime representation of a commit timestamp
-pub fn commit_datetime(timestamp: i64) -> DateTime<Utc> {
-    DateTime::from_timestamp(timestamp, 0).unwrap_or_default()
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_classify_commit_type_feat() {
+        assert_eq!(classify_commit_type("feat: add new feature"), "feat");
+        assert_eq!(classify_commit_type("feature: add new feature"), "feat");
+    }
+
+    #[test]
+    fn test_classify_commit_type_fix() {
+        assert_eq!(classify_commit_type("fix: bug fix"), "fix");
+        assert_eq!(classify_commit_type("bug: fix something"), "fix");
+        assert_eq!(classify_commit_type("hotfix: urgent fix"), "fix");
+        assert_eq!(classify_commit_type("patch: small fix"), "fix");
+    }
+
+    #[test]
+    fn test_classify_commit_type_docs() {
+        assert_eq!(classify_commit_type("docs: update readme"), "docs");
+        assert_eq!(classify_commit_type("doc: add documentation"), "docs");
+        assert_eq!(classify_commit_type("readme: update readme"), "docs");
+    }
+
+    #[test]
+    fn test_classify_commit_type_other() {
+        assert_eq!(classify_commit_type("random message"), "other");
+        assert_eq!(classify_commit_type(""), "other");
+    }
 }

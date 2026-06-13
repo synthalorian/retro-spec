@@ -18,7 +18,6 @@ pub struct BranchInfo {
 pub struct TagInfo {
     pub name: String,
     pub commit_id: String,
-    pub version: Option<String>,
 }
 
 /// Walk the full commit graph of a repository, tagging each commit with its branch name.
@@ -59,7 +58,6 @@ pub fn traverse_repo(repo_path: &str) -> Result<CommitDag> {
             tags.push(TagInfo {
                 name: tag_name.to_string(),
                 commit_id: obj.id().to_string(),
-                version: parse_semver(tag_name),
             });
         }
     }
@@ -120,10 +118,10 @@ pub fn traverse_repo(repo_path: &str) -> Result<CommitDag> {
         info.branch = branch_name.clone();
 
         // Mark as tag landmark if this commit has a tag
-        if tag_map.contains_key(commit_id.as_str()) {
-            if let Some(tag_name) = tag_map.get(commit_id.as_str()) {
-                info.tags.push(tag_name.to_string());
-            }
+        if tag_map.contains_key(commit_id.as_str())
+            && let Some(tag_name) = tag_map.get(commit_id.as_str())
+        {
+            info.tags.push(tag_name.to_string());
         }
 
         commits.push(info);
@@ -137,16 +135,6 @@ pub fn traverse_repo(repo_path: &str) -> Result<CommitDag> {
         branches,
         tags,
     })
-}
-
-/// Parse a version number from a tag name (e.g., "v1.2.3" → "1.2.3")
-fn parse_semver(tag_name: &str) -> Option<String> {
-    let version = tag_name.trim_start_matches('v');
-    if version.chars().any(|c| c.is_ascii_digit()) {
-        Some(version.to_string())
-    } else {
-        None
-    }
 }
 
 /// Assign each branch a unique neon color using golden-angle hue distribution.
@@ -187,4 +175,43 @@ fn hsv_to_rgb(h: f32, s: f32, v: f32) -> (f32, f32, f32) {
     };
 
     ((r1 + m).clamp(0.0, 1.0), (g1 + m).clamp(0.0, 1.0), (b1 + m).clamp(0.0, 1.0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hsv_to_rgb_red() {
+        let (r, g, b) = hsv_to_rgb(0.0, 1.0, 1.0);
+        assert!((r - 1.0).abs() < 0.001);
+        assert!((g - 0.0).abs() < 0.001);
+        assert!((b - 0.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_hsv_to_rgb_green() {
+        let (r, g, b) = hsv_to_rgb(120.0, 1.0, 1.0);
+        assert!((r - 0.0).abs() < 0.001);
+        assert!((g - 1.0).abs() < 0.001);
+        assert!((b - 0.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_hsv_to_rgb_blue() {
+        let (r, g, b) = hsv_to_rgb(240.0, 1.0, 1.0);
+        assert!((r - 0.0).abs() < 0.001);
+        assert!((g - 0.0).abs() < 0.001);
+        assert!((b - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_assign_branch_colors_main_first() {
+        let mut branches = vec![
+            BranchInfo { name: "feature".to_string(), tip_commit: "a".to_string(), color: [0.0, 0.0, 0.0, 1.0] },
+            BranchInfo { name: "main".to_string(), tip_commit: "b".to_string(), color: [0.0, 0.0, 0.0, 1.0] },
+        ];
+        assign_branch_colors(&mut branches);
+        assert_eq!(branches[0].name, "main");
+    }
 }

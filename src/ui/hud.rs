@@ -3,6 +3,7 @@ use crate::render::buildings::Building;
 
 /// HUD overlay — commit details, author info, stats
 #[derive(Resource)]
+#[allow(dead_code)]
 pub struct HudState {
     pub selected_commit: Option<String>,
     pub commit_count: usize,
@@ -120,20 +121,20 @@ pub fn hud_system(
             };
 
             text.0 = format!(
-                            "═══ {} ═══{}\\n\
-                             {} by {}\n\
-                             │ +{} / -{}  {} files\n\
-                             │ {}{}",
-                            &commit.id[..7],
-                            if commit.is_merge { " 🔀" } else { "" },
-                            date,
-                            commit.author,
-                            commit.lines_added,
-                            commit.lines_deleted,
-                            commit.files_changed,
-                            msg,
-                            tag_indicator,
-                        );
+                "═══ {} ═══{}\n\
+                 {} by {}\n\
+                 │ +{} / -{}  {} files\n\
+                 │ {}{}",
+                &commit.id[..7],
+                if commit.is_merge { " 🔀" } else { "" },
+                date,
+                commit.author,
+                commit.lines_added,
+                commit.lines_deleted,
+                commit.files_changed,
+                msg,
+                tag_indicator,
+            );
 
                         // Set focused building for diff preview pulse
                         focused.commit_id = Some(commit.id.clone());

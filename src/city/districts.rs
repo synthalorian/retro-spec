@@ -1,13 +1,7 @@
 use std::collections::HashMap;
 
-/// Filesystem directory → city district mapping
-pub struct DistrictInfo {
-    pub path: String,
-    pub color: [f32; 4],
-    pub commit_count: usize,
-}
-
 /// Map a set of file paths to districts with color-coding
+#[allow(dead_code)]
 pub fn map_districts(paths: &[String]) -> Vec<DistrictInfo> {
     // Group by top-level directory
     let mut dir_counts: HashMap<String, usize> = HashMap::new();
@@ -72,6 +66,14 @@ fn hsv_to_rgb(h: f32, s: f32, v: f32) -> (f32, f32, f32) {
         (g1 + m).clamp(0.0, 1.0),
         (b1 + m).clamp(0.0, 1.0),
     )
+}
+
+/// Filesystem directory → city district mapping
+#[allow(dead_code)]
+pub struct DistrictInfo {
+    pub path: String,
+    pub color: [f32; 4],
+    pub commit_count: usize,
 }
 
 #[cfg(test)]

@@ -31,6 +31,7 @@ pub fn get_theme(name: &str) -> Theme {
 }
 
 /// List all available theme names
+#[allow(dead_code)]
 pub fn list_themes() -> Vec<&'static str> {
     vec!["synthwave84", "matrix", "chrome"]
 }

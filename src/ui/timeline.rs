@@ -92,7 +92,7 @@ pub fn timeline_interaction(
     track_query: Query<&Node, With<TimelineTrack>>,
     mut thumb_query: Query<&mut Node, (With<TimelineThumb>, Without<TimelineTrack>)>,
 ) {
-    let Ok(track_node) = track_query.get_single() else {
+    let Ok(_track_node) = track_query.get_single() else {
         return;
     };
     let Ok(mut thumb_node) = thumb_query.get_single_mut() else {
@@ -120,16 +120,16 @@ pub fn timeline_interaction(
     }
 
     // Update position while dragging
-    if timeline.is_dragging {
-        if let Some(cursor) = cursor_moved.read().last() {
-            let mouse_x = cursor.position.x * window.scale_factor() as f32;
+    if timeline.is_dragging
+        && let Some(cursor) = cursor_moved.read().last()
+    {
+            let mouse_x = cursor.position.x * window.scale_factor();
             let ratio = ((mouse_x - track_left) / track_width).clamp(0.0, 1.0);
             timeline.current_position = ratio;
 
             // Move thumb to match
             thumb_node.left = Val::Percent(ratio * 100.0);
         }
-    }
 
     // Always sync thumb position with the current timeline value
     thumb_node.left = Val::Percent(timeline.current_position * 100.0);

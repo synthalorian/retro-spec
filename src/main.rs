@@ -102,7 +102,7 @@ fn main() -> anyhow::Result<()> {
             "merges": merges,
             "lines_added": total_added,
             "lines_deleted": total_deleted,
-            "net_change": if total_added > total_deleted { total_added - total_deleted } else { total_deleted - total_added },
+            "net_change": total_added.abs_diff(total_deleted),
             "theme": args.theme,
         });
         println!("{}", serde_json::to_string_pretty(&json)?);
