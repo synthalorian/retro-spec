@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Deserialize, Default)]
+#[allow(dead_code)]
 pub struct RetroSpecConfig {
     pub repo: Option<String>,
     pub theme: Option<String>,

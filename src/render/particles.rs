@@ -34,8 +34,12 @@ pub fn spawn_particles(
         ];
         let color = palette[rng.gen_range(0..palette.len())];
 
+        let mesh = match Sphere::new(size).mesh().ico(2) {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
         commands.spawn((
-            Mesh3d(meshes.add(Sphere::new(size).mesh().ico(2).unwrap())),
+            Mesh3d(meshes.add(mesh)),
             MeshMaterial3d(materials.add(StandardMaterial {
                 base_color: color,
                 emissive: LinearRgba::from(color) * 0.6,
@@ -46,7 +50,7 @@ pub fn spawn_particles(
             Transform::from_xyz(x, y, z),
             NeonParticle {
                 float_speed: rng.gen_range(0.2..0.8),
-                float_offset: rng.gen_range(0.0..6.28),
+                float_offset: rng.gen_range(0.0..std::f32::consts::TAU),
                 initial_y: y,
             },
         ));

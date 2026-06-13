@@ -40,8 +40,6 @@ pub struct MergePlaza {
     pub position: (f32, f32),
     pub radius: f32,
     pub color: [f32; 4],
-    pub commit_id: String,
-    pub branches: Vec<String>,
 }
 
 /// A glass skybridge connecting matching commits across branch boulevards
@@ -50,7 +48,6 @@ pub struct Skybridge {
     pub end: (f32, f32),
     pub height: f32,
     pub color: [f32; 4],
-    pub message: String,
 }
 
 /// Constants for city layout
@@ -133,7 +130,7 @@ struct BranchGroup<'a> {
     commits: Vec<&'a crate::git::commit::CommitInfo>,
 }
 
-fn group_by_branch(commits: &[crate::git::commit::CommitInfo]) -> Vec<BranchGroup> {
+fn group_by_branch(commits: &[crate::git::commit::CommitInfo]) -> Vec<BranchGroup<'_>> {
     let mut groups: HashMap<&str, Vec<&crate::git::commit::CommitInfo>> = HashMap::new();
     for c in commits {
         let branch = if c.branch.is_empty() { "main" } else { &c.branch };
@@ -417,8 +414,9 @@ fn build_merge_plazas(
         let parent_branch = commit_to_branch.get(parent_id).copied();
         let own_branch = branch;
 
-        if let Some(pb) = parent_branch {
-            if pb != own_branch {
+        if let Some(pb) = parent_branch
+            && pb != own_branch
+        {
                 // Different branches — create intersection plaza
                 let z_self = branch_z.get(own_branch).copied().unwrap_or(0.0);
                 let z_parent = branch_z.get(pb).copied().unwrap_or(0.0);
@@ -435,11 +433,8 @@ fn build_merge_plazas(
                     position: (prev_x, plaza_z),
                     radius: radius.max(2.0),
                     color: plaza_color,
-                    commit_id: c.id.clone(),
-                    branches: vec![own_branch.to_string(), pb.to_string()],
                 });
             }
-        }
     }
 
     plazas
@@ -469,7 +464,7 @@ fn build_skybridges(
 
     let mut skybridges = Vec::new();
 
-    for (message, matching_commits) in &subject_commits {
+    for matching_commits in subject_commits.values() {
         // Only create skybridges if the same subject appears in different branches
         let branches: HashSet<&str> = matching_commits
             .iter()
@@ -509,7 +504,6 @@ fn build_skybridges(
                 end: (lot2.position.0, lot2.position.1),
                 height: avg_height,
                 color: [0.5, 0.7, 1.0, 0.4], // glass/cyan
-                message: message.clone(),
             });
         }
     }
@@ -549,4 +543,88 @@ fn hsv_to_rgb(h: f32, s: f32, v: f32) -> (f32, f32, f32) {
     };
 
     ((r1 + m).clamp(0.0, 1.0), (g1 + m).clamp(0.0, 1.0), (b1 + m).clamp(0.0, 1.0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::git::commit::CommitInfo;
+
+    #[test]
+    fn test_plan_city_empty_commits() {
+        let commits: Vec<CommitInfo> = vec![];
+        let plan = plan_city(&commits).unwrap();
+        assert!(plan.streets.is_empty());
+        assert!(plan.lots.is_empty());
+        assert!(plan.districts.is_empty());
+        assert!(plan.plazas.is_empty());
+        assert!(plan.skybridges.is_empty());
+    }
+
+    #[test]
+    fn test_plan_city_single_commit() {
+        let commits = vec![CommitInfo {
+            id: "abc123".to_string(),
+            author: "test".to_string(),
+            timestamp: 1000,
+            message: "feat: initial commit".to_string(),
+            lines_added: 100,
+            lines_deleted: 0,
+            files_changed: 1,
+            branch: "main".to_string(),
+            parents: vec![],
+            is_merge: false,
+            is_tagged: false,
+            tags: vec![],
+            files: vec!["src/main.rs".to_string()],
+            commit_type: "feat".to_string(),
+        }];
+        let plan = plan_city(&commits).unwrap();
+        assert!(!plan.streets.is_empty());
+        assert!(!plan.lots.is_empty());
+        assert_eq!(plan.lots.len(), 1);
+        assert_eq!(plan.lots[0].commit_id, "abc123");
+    }
+
+    #[test]
+    fn test_assign_author_colors() {
+        let commits = vec![
+            CommitInfo {
+                id: "a".to_string(),
+                author: "alice".to_string(),
+                timestamp: 1000,
+                message: "feat: a".to_string(),
+                lines_added: 10,
+                lines_deleted: 0,
+                files_changed: 1,
+                branch: "main".to_string(),
+                parents: vec![],
+                is_merge: false,
+                is_tagged: false,
+                tags: vec![],
+                files: vec![],
+                commit_type: "feat".to_string(),
+            },
+            CommitInfo {
+                id: "b".to_string(),
+                author: "bob".to_string(),
+                timestamp: 2000,
+                message: "fix: b".to_string(),
+                lines_added: 5,
+                lines_deleted: 2,
+                files_changed: 1,
+                branch: "main".to_string(),
+                parents: vec![],
+                is_merge: false,
+                is_tagged: false,
+                tags: vec![],
+                files: vec![],
+                commit_type: "fix".to_string(),
+            },
+        ];
+        let colors = assign_author_colors(&commits);
+        assert_eq!(colors.len(), 2);
+        assert!(colors.contains_key("alice"));
+        assert!(colors.contains_key("bob"));
+    }
 }

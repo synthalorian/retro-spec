@@ -1,1 +1,7 @@
 target/
+
+# AI session artifacts
+.sandbox-home/
+.claw/
+.omo/
+.clawd-todos.json

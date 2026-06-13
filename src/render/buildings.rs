@@ -12,8 +12,6 @@ const LOD_HIDE_DIST: f32 = 200.0;
 #[derive(Component)]
 pub struct Building {
     pub commit_id: String,
-    pub height: f32,
-    pub is_tagged: bool,
     pub timestamp: i64,
 }
 
@@ -75,8 +73,9 @@ pub fn spawn_buildings(
         let mut tinted = heat_tint_color(b.color, heat);
 
         // Commit type tint (feat=blue, fix=green, docs=yellow, etc.)
-        if let Some(cd) = commit_data {
-            if let Some(c) = cd.commits.iter().find(|c| c.id == b.commit_id) {
+        if let Some(cd) = commit_data
+            && let Some(c) = cd.commits.iter().find(|c| c.id == b.commit_id)
+        {
                 let type_color = commit_type_color(&c.commit_type);
                 // 85% existing tinted, 15% type color
                 tinted = [
@@ -86,7 +85,6 @@ pub fn spawn_buildings(
                     tinted[3],
                 ];
             }
-        }
 
         let tex_handle = texture_cache
             .entry(seed)
@@ -117,8 +115,6 @@ pub fn spawn_buildings(
             Transform::from_xyz(b.position.0, b.height / 2.0, b.position.2),
             Building {
                 commit_id: b.commit_id.clone(),
-                height: b.height,
-                is_tagged: b.is_tagged,
                 timestamp: b.timestamp,
             },
         ));
@@ -315,8 +311,37 @@ pub fn animate_focused_building(
         if &building.commit_id == focused_id {
             let pulse = 1.0 + (elapsed * 3.0).sin() * 0.03;
             // Only scale X and Z (not Y) — building grows wider but not taller
-            let current = transform.scale;
+            let _current = transform.scale;
             transform.scale = Vec3::new(pulse, 1.0, pulse);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_simple_hash_consistency() {
+        assert_eq!(simple_hash("abc"), simple_hash("abc"));
+        assert_ne!(simple_hash("abc"), simple_hash("def"));
+    }
+
+    #[test]
+    fn test_commit_type_color_known() {
+        assert_eq!(commit_type_color("feat"), [0.3, 0.5, 1.0, 1.0]);
+        assert_eq!(commit_type_color("fix"), [0.3, 1.0, 0.4, 1.0]);
+        assert_eq!(commit_type_color("docs"), [1.0, 1.0, 0.3, 1.0]);
+        assert_eq!(commit_type_color("chore"), [0.5, 0.5, 0.5, 1.0]);
+        assert_eq!(commit_type_color("refactor"), [0.6, 0.3, 1.0, 1.0]);
+        assert_eq!(commit_type_color("test"), [1.0, 0.6, 0.2, 1.0]);
+        assert_eq!(commit_type_color("style"), [1.0, 0.4, 0.7, 1.0]);
+        assert_eq!(commit_type_color("perf"), [1.0, 0.2, 0.2, 1.0]);
+    }
+
+    #[test]
+    fn test_commit_type_color_unknown() {
+        assert_eq!(commit_type_color("unknown"), [0.0, 0.0, 0.0, 1.0]);
+        assert_eq!(commit_type_color(""), [0.0, 0.0, 0.0, 1.0]);
     }
 }

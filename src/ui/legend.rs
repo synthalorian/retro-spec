@@ -66,7 +66,7 @@ pub fn setup_legend(
             ));
 
             // Author entries
-            for (i, (author, color)) in state.authors.iter().enumerate() {
+            for (author, color) in state.authors.iter() {
                 let display_name = if author.len() > 14 {
                     format!("{}…", &author[..13])
                 } else {
@@ -107,7 +107,7 @@ pub fn setup_legend(
             ));
 
             // Directory entries (limit to 8 to avoid clutter)
-            for (i, (dir, color)) in state.directories.iter().enumerate().take(8) {
+            for (_i, (dir, color)) in state.directories.iter().enumerate().take(8) {
                 let display_name = if dir.len() > 14 {
                     format!("{}…", &dir[..13])
                 } else {
@@ -173,12 +173,6 @@ pub fn toggle_legend_system(
 }
 
 /// Render a text-based color swatch
-fn color_swatch(color: [f32; 4]) -> String {
-    // Use block characters filled proportionally to the color brightness
-    let brightness = (color[0] * 0.299 + color[1] * 0.587 + color[2] * 0.114).clamp(0.0, 1.0);
-    if brightness > 0.6 {
-        "■".to_string()
-    } else {
-        "■".to_string()
-    }
+fn color_swatch(_color: [f32; 4]) -> String {
+    "■".to_string()
 }

@@ -8,4 +8,4 @@ pub mod terrain;
 
 pub use camera::fly_camera_controls;
 pub use buildings::{rotate_tag_beacons, apply_lod, animate_focused_building};
-pub use particles::{spawn_particles, animate_particles};
+pub use particles::animate_particles;

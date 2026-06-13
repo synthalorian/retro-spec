@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy::audio::{AudioPlayer, AudioSource, PlaybackMode, PlaybackSettings};
-use std::sync::Arc;
 
 /// Generate a WAV-formatted synthwave ambient drone in memory.
 /// Creates a deep bass drone with warm pad and shimmer harmonics.
