@@ -1,5 +1,9 @@
 # RETRO SPEC ⚡🏙️
 
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Language](https://img.shields.io/badge/Language-Rust-blue)
+![Platform](https://img.shields.io/badge/Platform-Linux/macOS/Windows-blue)
+
 **"Walk your code like a city at midnight."**
 
 RetroSpec is a 3D city generator that renders your entire Git history as an explorable neon metropolis. Every commit is a building. Every branch is a boulevard. Every merge is an intersection. Fly through your project's past and see the architecture of your code in three dimensions.
