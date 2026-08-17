@@ -3,7 +3,7 @@ name = "retro-spec"
 version = "0.1.0"
 edition = "2024"
 description = "Walk your git history as a 3D neon cityscape"
-authors = ["synthalorian 🎹🤺 (synthalorian)"]
+authors = ["synth (synthalorian)"]
 license = "MIT"
 repository = "https://github.com/synthalorian/retro-spec"
 
