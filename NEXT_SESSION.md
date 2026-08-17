@@ -64,16 +64,16 @@ Tagged commits currently have wider base + gold tint. Give them rotating beacon 
 cargo check
 
 # Visual test with open_habit
-cargo run -- -r /home/synthalorian 🎹🤺/projects/open_habit
+cargo run -- -r /home/synth/projects/open_habit
 
 # Stats sanity
-cargo run -- -r /home/synthalorian 🎹🤺/projects/retro-spec --stats
+cargo run -- -r /home/synth/projects/retro-spec --stats
 ```
 
 **Test repos:**
-- `/home/synthalorian 🎹🤺/projects/retro-spec` — simple, has merge commits if you've PR'd
-- `/home/synthalorian 🎹🤺/projects/open_habit` — 9 commits, 3 tags, single branch
-- `/home/synthalorian 🎹🤺/projects/hermes-agent` — 800+ commits, 10+ branches, merges galore
+- `/home/synth/projects/retro-spec` — simple, has merge commits if you've PR'd
+- `/home/synth/projects/open_habit` — 9 commits, 3 tags, single branch
+- `/home/synth/projects/hermes-agent` — 800+ commits, 10+ branches, merges galore
 
 ---
 
