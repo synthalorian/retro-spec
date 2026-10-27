@@ -12,7 +12,7 @@ repository = "https://github.com/synthalorian/retro-spec"
 clap = { version = "4", features = ["derive"] }
 
 # Git parsing
-git2 = "0.19"
+git2 = "0.21"
 
 # 3D rendering
 bevy = { version = "0.15", features = ["wav"] }
