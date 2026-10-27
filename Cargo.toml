@@ -20,7 +20,7 @@ bevy = { version = "0.15", features = ["wav"] }
 # Serialization (config/themes)
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-toml = "0.8"
+toml = "1.1"
 
 # Time parsing
 chrono = { version = "0.4", features = ["serde"] }
