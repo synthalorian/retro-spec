@@ -933,7 +933,7 @@ dependencies = [
  "derive_more",
  "glam",
  "itertools 0.13.0",
- "rand 0.8.6",
+ "rand 0.8.8",
  "rand_distr",
  "serde",
  "smallvec",
@@ -2518,7 +2518,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8babf46d4c1c9d92deac9f7be466f76dfc4482b6452fc5024b5e8daf6ffeb3ee"
 dependencies = [
  "bytemuck",
- "rand 0.8.6",
+ "rand 0.8.8",
  "serde",
 ]
 
@@ -4210,9 +4210,9 @@ checksum = "019b4b213425016d7d84a153c4c73afb0946fbb4840e4eece7ba8848b9d6da22"
 
 [[package]]
 name = "rand"
-version = "0.8.6"
+version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a"
+checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
 dependencies = [
  "libc",
  "rand_chacha 0.3.1",
@@ -4274,7 +4274,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32cb0b9bc82b0a0876c2dd994a7e7a2683d3e7390ca40e6886785ef0c7e3ee31"
 dependencies = [
  "num-traits",
- "rand 0.8.6",
+ "rand 0.8.8",
 ]
 
 [[package]]
@@ -4453,7 +4453,7 @@ dependencies = [
  "clap",
  "git2",
  "image",
- "rand 0.8.6",
+ "rand 0.9.4",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
